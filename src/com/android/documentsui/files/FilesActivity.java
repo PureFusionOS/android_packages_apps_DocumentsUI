@@ -22,9 +22,13 @@ import android.app.ActivityManager.TaskDescription;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.KeyboardShortcutGroup;
 import android.view.Menu;
@@ -181,12 +185,21 @@ public class FilesActivity extends BaseActivity implements ActionHandler.Addons 
         int iconRes = intent.getIntExtra(LauncherActivity.TASK_ICON_RES, -1);
         assert(iconRes > -1);
 
-        BitmapDrawable drawable = (BitmapDrawable) getResources().getDrawable(
+        Drawable drawable = (Drawable) getResources().getDrawable(
                 iconRes,
                 null  // we don't care about theme, since the supplier should have handled that.
                 );
 
-        setTaskDescription(new TaskDescription(label, drawable.getBitmap()));
+        setTaskDescription(new TaskDescription(label, getBitmapFromDrawable(drawable)));
+    }
+
+    @NonNull
+    private Bitmap getBitmapFromDrawable(@NonNull Drawable drawable) {
+        final Bitmap bmp = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(bmp);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bmp;
     }
 
     private void presentFileErrors(Bundle icicle, final Intent intent) {
