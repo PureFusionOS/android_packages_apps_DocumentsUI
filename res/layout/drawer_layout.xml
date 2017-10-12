@@ -71,7 +71,7 @@
 
         <LinearLayout
             android:id="@+id/drawer_roots"
-            android:layout_width="256dp"
+            android:layout_width="320.0dip"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:orientation="vertical"
